@@ -1,24 +1,17 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import { Login } from "./login.js";
+import { Register } from "./register.js";
+import { Tasks } from "./tasks.js";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Task Manager
-    </p>
-  </div>
-`
+const app = document.getElementById("app");
 
-setupCounter(document.querySelector('#counter'))
+window.loadView = function(view) {
+  switch(view) {
+    case "login": app.innerHTML = Login(); break;
+    case "register": app.innerHTML = Register(); break;
+    case "tasks": app.innerHTML = Tasks(); break;
+    default: app.innerHTML = "<h2>Bienvenido a Gestión de Tareas</h2>";
+  }
+}
+
+// Cargar vista inicial
+loadView("login");
