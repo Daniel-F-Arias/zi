@@ -1,17 +1,21 @@
-import { Login } from "./login.js";
-import { Register } from "./register.js";
-import { Tasks } from "./tasks.js";
+import { renderLogin, addLoginLogic } from "./login.js";
+import { renderRegister, addRegisterLogic } from "./register.js";
 
-const app = document.getElementById("app");
+function router() {
+  const path = window.location.pathname;
 
-window.loadView = function(view) {
-  switch(view) {
-    case "login": app.innerHTML = Login(); break;
-    case "register": app.innerHTML = Register(); break;
-    case "tasks": app.innerHTML = Tasks(); break;
-    default: app.innerHTML = "<h2>Bienvenido a Gestión de Tareas</h2>";
+  if (path === "/signup") {
+    document.getElementById("app").innerHTML = renderRegister();
+    addRegisterLogic();
+  } else {
+    // por defecto /login
+    document.getElementById("app").innerHTML = renderLogin();
+    addLoginLogic();
   }
 }
 
-// Cargar vista inicial
-loadView("login");
+// Escuchar cambios de ruta
+window.addEventListener("popstate", router);
+
+// Cargar la vista inicial
+router();
