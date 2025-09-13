@@ -18,7 +18,7 @@ function mount(view, logic) {
 /**
  * "/" → Login page
  * "/signup" → Register page
- * "/tasks" → Dashboard page
+ * "/tasks" → Dashboard pag
  */
 page("/", () => mount(renderLogin, addLoginLogic));
 page("/signup", () => mount(renderRegister, addRegisterLogic));
