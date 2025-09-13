@@ -1,4 +1,8 @@
-import { renderLogin, addLoginLogic } from "./login.js";
+import page from "page";
+import { renderLogin, addLoginLogic } from "./LoginPage.js";
+import "../styles/main.css";
+import "../styles/components.css";
+import "../styles/pages.css";
 
 export function renderRegister() {
   return `
@@ -7,14 +11,14 @@ export function renderRegister() {
         <img src="logo.png" alt="Logo" class="logo" />
         <h2>Crear cuenta</h2>
         <form id="registerForm" novalidate>
-          <input type="text" id="nombres" placeholder="Nombres" required />
-          <div class="error" id="error-nombres"></div>
+          <input type="text" id="names" placeholder="Nombres" required />
+          <div class="error" id="error-names"></div>
 
-          <input type="text" id="apellidos" placeholder="Apellidos" required />
-          <div class="error" id="error-apellidos"></div>
+          <input type="text" id="surnames" placeholder="Apellidos" required />
+          <div class="error" id="error-surnames"></div>
 
-          <input type="number" id="edad" placeholder="Edad" required />
-          <div class="error" id="error-edad"></div>
+          <input type="number" id="age" placeholder="Edad" required />
+          <div class="error" id="error-age"></div>
 
           <input type="email" id="email" placeholder="Correo electrónico" required />
           <div class="error" id="error-email"></div>
@@ -29,7 +33,7 @@ export function renderRegister() {
           <div id="spinner" class="hidden">⏳ Procesando...</div>
         </form>
         <p>¿Ya tienes cuenta? 
-          <a href="/login" id="goToLogin">Inicia sesión</a>
+          <a href="#" id="goToLogin">Inicia sesión</a>
         </p>
       </div>
       <div id="toast" class="toast hidden">Cuenta creada con éxito</div>
@@ -44,33 +48,33 @@ export function addRegisterLogic() {
   const toast = document.getElementById("toast");
 
   const inputs = {
-    nombres: form.nombres,
-    apellidos: form.apellidos,
-    edad: form.edad,
+    names: form.names,
+    surnames: form.surnames,
+    age: form.age,
     email: form.email,
     password: form.password,
     confirm: form.confirmPassword,
   };
 
-  // Validar un campo específico (muestra/oculta error SOLO de ese campo)
+  // validate fields
   function validateField(field) {
-    if (field === "nombres") {
-      if (inputs.nombres.value.trim() === "") {
-        return showError("nombres", "Ingrese sus nombres"), false;
-      } else hideError("nombres");
+    if (field === "names") {
+      if (inputs.names.value.trim() === "") {
+        return showError("names", "Ingrese sus nombres"), false;
+      } else hideError("names");
     }
 
-    if (field === "apellidos") {
-      if (inputs.apellidos.value.trim() === "") {
-        return showError("apellidos", "Ingrese sus apellidos"), false;
-      } else hideError("apellidos");
+    if (field === "surnames") {
+      if (inputs.surnames.value.trim() === "") {
+        return showError("surnames", "Ingrese sus apellidos"), false;
+      } else hideError("surnames");
     }
 
-    if (field === "edad") {
-      const edad = parseInt(inputs.edad.value, 10);
-      if (isNaN(edad) || edad < 13) {
-        return showError("edad", "Edad ≥ 13"), false;
-      } else hideError("edad");
+    if (field === "age") {
+      const age = parseInt(inputs.age.value, 10);
+      if (isNaN(age) || age < 13) {
+        return showError("age", "Edad ≥ 13"), false;
+      } else hideError("age");
     }
 
     if (field === "email") {
@@ -95,12 +99,12 @@ export function addRegisterLogic() {
     return true;
   }
 
-  // Verifica si todo el formulario es válido (pero sin mostrar errores masivos)
+  // Check if the entire form is valid
   function isFormValid() {
     return (
-      inputs.nombres.value.trim() !== "" &&
-      inputs.apellidos.value.trim() !== "" &&
-      parseInt(inputs.edad.value, 10) >= 13 &&
+      inputs.names.value.trim() !== "" &&
+      inputs.surnames.value.trim() !== "" &&
+      parseInt(inputs.age.value, 10) >= 13 &&
       /\S+@\S+\.\S+/.test(inputs.email.value) &&
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(inputs.password.value) &&
       inputs.password.value === inputs.confirm.value &&
@@ -108,60 +112,51 @@ export function addRegisterLogic() {
     );
   }
 
-  // Mostrar error
   function showError(field, msg) {
     document.getElementById(`error-${field}`).innerText = msg;
   }
 
-  // Ocultar error
   function hideError(field) {
     document.getElementById(`error-${field}`).innerText = "";
   }
 
-  // Validación en tiempo real → SOLO campo editado + estado del botón
+  // Real-time validation
   Object.entries(inputs).forEach(([key, input]) => {
     input.addEventListener("input", () => {
-      validateField(key);       // valida ese campo
-      btn.disabled = !isFormValid(); // habilita solo si todo está correcto
+      validateField(key);
+      btn.disabled = !isFormValid();
     });
   });
 
-  // Enviar formulario
+  // Submit form
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     spinner.classList.remove("hidden");
     btn.disabled = true;
 
-    // Simular backend (2s, máx 3s)
     setTimeout(() => {
       spinner.classList.add("hidden");
       toast.classList.remove("hidden");
 
       console.log("Usuario creado:", {
         id: Date.now(),
-        nombres: inputs.nombres.value,
-        apellidos: inputs.apellidos.value,
-        edad: inputs.edad.value,
+        names: inputs.names.value,
+        surnames: inputs.surnames.value,
+        age: inputs.age.value,
         email: inputs.email.value,
       });
 
       setTimeout(() => {
         toast.classList.add("hidden");
-
-        // Redirigir a login
-        history.pushState({}, "", "/login");
-        document.getElementById("app").innerHTML = renderLogin();
-        addLoginLogic();
-      }, 500); // redirección ≤ 500 ms
+        page("/");
+      }, 500);
     }, 2000);
   });
 
-  // Botón para ir a login
+  // Button to go to login
   document.getElementById("goToLogin").addEventListener("click", (e) => {
     e.preventDefault();
-    history.pushState({}, "", "/login");
-    document.getElementById("app").innerHTML = renderLogin();
-    addLoginLogic();
+    page("/");
   });
 }

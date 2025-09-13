@@ -1,21 +1,21 @@
-import { renderLogin, addLoginLogic } from "./login.js";
-import { renderRegister, addRegisterLogic } from "./register.js";
+import page from "page";
+import { 
+  renderLogin, addLoginLogic,
+  renderForgotPassword, addForgotPasswordLogic 
+} from "./pages/LoginPage.js";
+import { renderRegister, addRegisterLogic } from "./pages/RegisterPage.js";
+import { DashboardPage } from "./pages/DashboardPage.js";
 
-function router() {
-  const path = window.location.pathname;
-
-  if (path === "/signup") {
-    document.getElementById("app").innerHTML = renderRegister();
-    addRegisterLogic();
-  } else {
-    // por defecto /login
-    document.getElementById("app").innerHTML = renderLogin();
-    addLoginLogic();
-  }
+function mount(renderFn, logicFn) {
+  const app = document.getElementById("app");
+  app.innerHTML = renderFn ? renderFn() : "";
+  if (logicFn) logicFn();
 }
 
-// Escuchar cambios de ruta
-window.addEventListener("popstate", router);
+// ================== routes ==================
+page("/", () => mount(renderLogin, addLoginLogic));
+page("/signup", () => mount(renderRegister, addRegisterLogic));
+page("/forgot-password", () => mount(renderForgotPassword, addForgotPasswordLogic));
+page("/tasks", () => DashboardPage());  
 
-// Cargar la vista inicial
-router();
+page.start();
